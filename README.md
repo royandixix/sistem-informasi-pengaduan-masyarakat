@@ -1,60 +1,159 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Sistem Informasi Pengaduan Masyarakat
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <a href="https://laravel.com" target="_blank">
+    <img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="300" alt="Laravel Logo">
+  </a>
 </p>
 
-## About Laravel
+Sistem Informasi Pengaduan Masyarakat berbasis **Laravel**. Sistem ini memungkinkan:
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Masyarakat membuat pengaduan secara online.
+- Admin mengelola dan memantau pengaduan melalui dashboard.
+- Tampilan responsif menggunakan **Tailwind CSS**.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## **Fitur Utama**
 
-## Learning Laravel
+### Masyarakat
+- **Beranda**: melihat daftar pengaduan (tanpa login atau dengan login).
+- **Ajukan Pengaduan**: submit pengaduan baru dengan opsi upload foto.
+- **Cek Status**: melihat status pengaduan mereka.
+- **Detail Pengaduan**: melihat rincian setiap pengaduan.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### Admin
+- **Login Admin**: akses ke dashboard.
+- **Dashboard Admin**: ringkasan pengaduan.
+- **Kelola Pengaduan**: ubah status pengaduan (`menunggu`, `diproses`, `selesai`).
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## **Persyaratan Sistem**
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- PHP >= 8.2
+- Composer
+- MySQL / MariaDB
+- Node.js & NPM
+- Laravel 12.x
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## **Struktur Folder**
 
-## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
-## Code of Conduct
+sistem-informasi-pengaduan-masyarakat/
+├── app/
+│ ├── Http/Controllers/
+│ │ ├── Auth/
+│ │ ├── Admin/
+│ │ └── Masyarakat/
+│ └── Models/
+├── database/
+│ ├── migrations/
+│ └── seeders/
+├── public/ # file statis (CSS, JS, gambar)
+├── resources/
+│ ├── views/ # Blade templates (UI)
+│ │ ├── admin/
+│ │ └── masyarakat/
+│ └── css/
+├── routes/
+│ └── web.php # definisi semua route
+├── storage/
+├── vendor/
+├── artisan # command line Laravel
+└── composer.json
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## **Instalasi Lokal**
 
-## License
+### 1. Clone Repository
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-# sistem-informasi-pengaduan-masyarakat
+```bash
+git clone <URL_REPO_KAMU>
+cd sistem-informasi-pengaduan-masyarakat
+
+2. Install Dependencies
+composer install
+npm install
+npm run dev
+
+3. Setup Environment
+
+Copy file .env.example menjadi .env:
+
+cp .env.example .env
+
+
+Edit .env untuk konfigurasi database:
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=sistem_informasi_pengaduan_masyarakat
+DB_USERNAME=root
+DB_PASSWORD=  # sesuai password lokal
+
+4. Migrasi Database
+php artisan migrate
+php artisan db:seed   # opsional, untuk data dummy/admin
+
+5. Jalankan Server
+php artisan serve
+
+
+Halaman default masyarakat: http://127.0.0.1:8000/masyarakat
+
+Halaman login admin: http://127.0.0.1:8000/login
+
+Routing Utama
+Masyarakat
+Route	Controller / Method	Keterangan
+/masyarakat	PengaduanController@index	Beranda
+/masyarakat/pengaduan/create	PengaduanController@create	Form ajukan pengaduan
+/masyarakat/pengaduan	PengaduanController@store	Simpan pengaduan
+/masyarakat/pengaduan/status	PengaduanController@status	Cek status pengaduan
+/masyarakat/pengaduan/{id}	PengaduanController@show	Detail pengaduan
+Admin
+Route	Controller / Method	Keterangan
+/login	AuthController@showLogin	Login admin
+/login (POST)	AuthController@login	Proses login
+/admin/dashboard	DashboardController@index	Dashboard admin
+/admin/pengaduan	AdminPengaduan@index	List pengaduan
+/admin/pengaduan/{id}/status (POST)	AdminPengaduan@updateStatus	Update status pengaduan
+Middleware & Keamanan
+
+Admin Middleware: semua /admin/* harus login sebagai admin.
+
+Masyarakat: boleh submit pengaduan tanpa login, tapi jika login bisa memantau status.
+
+Semua form menggunakan @csrf untuk keamanan Laravel.
+
+UI & Blade
+
+Tailwind CSS: untuk styling responsif.
+
+Blade Template:
+
+resources/views/masyarakat → halaman masyarakat.
+
+resources/views/admin → halaman admin.
+
+Navbar dan tombol interaktif sudah disiapkan di Blade.
+
+Kontribusi
+
+Boleh fork project ini dan membuat pull request.
+
+Ikuti Code of Conduct Laravel: https://laravel.com/docs/contributions#code-of-conduct
+.
+
+Lisensi
+
+Project ini menggunakan lisensi MIT License: https://opensource.org/licenses/MIT
+
+Dibuat menggunakan Laravel 12, PHP 8.2, MySQL/MariaDB, Tailwind CSS.
