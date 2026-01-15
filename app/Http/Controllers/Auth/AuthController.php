@@ -12,13 +12,16 @@ use Illuminate\Validation\Rules\Password as PasswordRule;
 class AuthController extends Controller
 {
     // =====================
-    // REGISTER (ADMIN SAJA)
+    // TAMPILAN REGISTER ADMIN
     // =====================
     public function showRegister()
     {
         return view('auth.register');
     }
 
+    // =====================
+    // PROSES REGISTER ADMIN
+    // =====================
     public function register(Request $request)
     {
         $request->validate([
@@ -28,25 +31,30 @@ class AuthController extends Controller
         ]);
 
         $user = User::create([
-            'name'=>$request->name,
-            'email'=>$request->email,
-            'password'=>Hash::make($request->password),
-            'role'=>'admin', // admin default
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => 'admin',
+            'email_verified_at' => now(),
         ]);
 
-        Auth::login($user);
+        Auth::login($user, true);
 
-        return redirect()->route('admin.dashboard')->with('success','Akun admin berhasil dibuat.');
+        return redirect()->route('admin.dashboard')
+            ->with('success','Akun admin berhasil dibuat dan langsung login.');
     }
 
     // =====================
-    // LOGIN (ADMIN SAJA)
+    // TAMPILAN LOGIN ADMIN
     // =====================
     public function showLogin()
     {
         return view('auth.login');
     }
 
+    // =====================
+    // PROSES LOGIN ADMIN
+    // =====================
     public function login(Request $request)
     {
         $request->validate([
@@ -54,16 +62,21 @@ class AuthController extends Controller
             'password'=>'required|string',
         ]);
 
-        if(Auth::attempt($request->only('email','password'), $request->filled('remember'))){
+        // Hanya admin
+        if(Auth::attempt(
+            $request->only('email','password') + ['role'=>'admin'],
+            $request->filled('remember')
+        )){
             $request->session()->regenerate();
-            return redirect()->route('admin.dashboard')->with('success','Login berhasil, selamat datang Admin!');
+            return redirect()->route('admin.dashboard')
+                             ->with('success','Login berhasil, selamat datang Admin!');
         }
 
         return back()->with('error','Email atau password salah.');
     }
 
     // =====================
-    // LOGOUT
+    // LOGOUT ADMIN
     // =====================
     public function logout(Request $request)
     {

@@ -1,67 +1,148 @@
-<!-- resources/views/masyarakat/partials/navbar.blade.php -->
-<header id="navbar" class="fixed inset-x-0 top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-200 shadow-sm">
+{{-- resources/views/masyarakat/layout/navbar.blade.php --}}
+<header class="fixed inset-x-0 top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-200 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
 
         <!-- Brand -->
-        <a href="{{ route('masyarakat.index') }}" class="flex items-center gap-3 group">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white flex items-center justify-center shadow-sm transform transition-transform duration-300 group-hover:scale-110">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                          d="M3 21h18M4 21V5a1 1 0 011-1h4a1 1 0 011 1v16m4 0V9a1 1 0 011-1h4a1 1 0 011 1v12" />
-                </svg>
+        <a href="{{ route('masyarakat.index') }}" class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white flex items-center justify-center">
+                🏢
             </div>
-            <div class="leading-tight">
-                <p class="text-sm font-semibold text-gray-900">Pengaduan</p>
-                <p class="text-xs text-gray-500 group-hover:text-blue-600 transition-colors duration-300">Masyarakat</p>
+            <div>
+                <p class="text-sm font-semibold">Pengaduan</p>
+                <p class="text-xs text-gray-500">Masyarakat</p>
             </div>
         </a>
 
-        <!-- Desktop Menu -->
-        <nav class="hidden md:flex items-center gap-10 text-sm font-medium">
-            <a href="{{ route('masyarakat.index') }}" class="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-all duration-300">
-                Beranda
-            </a>
-            <a href="{{ route('masyarakat.pengaduan.status') }}" class="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-all duration-300">
-                Cek Status
-            </a>
-            <a href="{{ route('masyarakat.pengaduan.create') }}" class="flex items-center gap-2 text-gray-700 hover:text-green-600 transition-all duration-300">
-                Ajukan Pengaduan
-            </a>
+        <!-- Menu -->
+        <nav class="hidden md:flex items-center gap-8 text-sm font-medium">
+            <a href="{{ route('masyarakat.index') }}">Beranda</a>
+            <a href="{{ route('masyarakat.pengaduan.status') }}">Cek Status</a>
+            <a href="{{ route('masyarakat.pengaduan.create') }}">Ajukan Pengaduan</a>
+
+            @guest
+                <button onclick="openAuthModal()"
+                    class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition">
+                    👤
+                </button>
+            @endguest
+
+            @auth
+                <div class="flex items-center gap-4">
+                    <span class="text-sm text-gray-700">Hi, <strong>{{ auth()->user()->name }}</strong></span>
+                    <form action="{{ route('masyarakat.logout') }}" method="POST">
+                        @csrf
+                        <button class="text-sm text-red-600 hover:underline">Logout</button>
+                    </form>
+                </div>
+            @endauth
         </nav>
-
-        <!-- Mobile Menu Button -->
-        <button id="menuBtn" class="md:hidden p-2 rounded-xl hover:bg-gray-100 transition duration-300">
-            <svg id="menuIcon" class="w-6 h-6 text-gray-800 transition-transform duration-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path id="menuIconPath" stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-        </button>
-    </div>
-
-    <!-- Mobile Menu -->
-    <div id="mobileMenu" class="md:hidden overflow-hidden transition-all duration-500 ease-in-out" style="max-height: 0;">
-        <div class="px-4 py-4 space-y-3 bg-white border-t border-gray-100">
-            <a href="{{ route('masyarakat.index') }}" class="mobile-menu-item block px-4 py-3 rounded-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-300">
-                Beranda
-            </a>
-            <a href="{{ route('masyarakat.pengaduan.status') }}" class="mobile-menu-item block px-4 py-3 rounded-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-300">
-                Cek Status
-            </a>
-            <a href="{{ route('masyarakat.pengaduan.create') }}" class="mobile-menu-item block px-4 py-3 rounded-xl text-gray-700 hover:bg-green-50 hover:text-green-600 transition-all duration-300">
-                Ajukan Pengaduan
-            </a>
-        </div>
     </div>
 </header>
 
+{{-- MODAL LOGIN/REGISTER --}}
+<div id="authModal" class="fixed inset-0 z-50 hidden bg-black/40 backdrop-blur-sm flex items-center justify-center">
+    <div class="bg-white w-full max-w-md rounded-xl p-6 relative shadow-xl">
+        <button onclick="closeAuthModal()" class="absolute top-3 right-3 text-gray-500 hover:text-gray-800">✕</button>
+
+        {{-- LOGIN --}}
+        <div id="loginForm">
+            <h2 class="text-xl font-bold mb-4">Login</h2>
+            <form action="{{ route('masyarakat.login.process') }}" method="POST" class="space-y-3">
+                @csrf
+                <input type="email" name="email" placeholder="Email" class="w-full border px-3 py-2 rounded" required>
+                <input type="password" name="password" placeholder="Password" class="w-full border px-3 py-2 rounded" required>
+                <label class="inline-flex items-center mb-2">
+                    <input type="checkbox" name="remember" class="mr-2"> Ingat saya
+                </label>
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Login</button>
+            </form>
+            <p class="text-sm mt-4 text-center">
+                Belum punya akun? 
+                <button type="button" onclick="switchToRegister()" class="text-blue-600 underline">Register</button>
+            </p>
+        </div>
+
+        {{-- REGISTER --}}
+        <div id="registerForm" class="hidden">
+            <h2 class="text-xl font-bold mb-4">Register</h2>
+            <form action="{{ route('masyarakat.register.process') }}" method="POST" class="space-y-3">
+                @csrf
+                <input type="text" name="name" placeholder="Nama" class="w-full border px-3 py-2 rounded" required>
+                <input type="email" name="email" placeholder="Email" class="w-full border px-3 py-2 rounded" required>
+                <input type="password" name="password" placeholder="Password" class="w-full border px-3 py-2 rounded" required>
+                <input type="password" name="password_confirmation" placeholder="Konfirmasi Password" class="w-full border px-3 py-2 rounded" required>
+                <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">Register</button>
+            </form>
+            <p class="text-sm mt-4 text-center">
+                Sudah punya akun? 
+                <button type="button" onclick="switchToLogin()" class="text-blue-600 underline">Login</button>
+            </p>
+        </div>
+    </div>
+</div>
+
+{{-- Toast Container --}}
+<div id="toastContainer" class="fixed top-4 right-4 z-50 flex flex-col gap-2"></div>
+
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const menuBtn = document.getElementById('menuBtn');
-    const mobileMenu = document.getElementById('mobileMenu');
-    let isMenuOpen = false;
-    menuBtn?.addEventListener('click', () => {
-        isMenuOpen = !isMenuOpen;
-        mobileMenu.style.maxHeight = isMenuOpen ? mobileMenu.scrollHeight + 'px' : '0';
-        mobileMenu.classList.toggle('active', isMenuOpen);
+    // === Modal ===
+    function openAuthModal() {
+        document.getElementById('authModal').classList.remove('hidden');
+        switchToLogin();
+        document.body.classList.add('overflow-hidden');
+    }
+    function closeAuthModal() {
+        document.getElementById('authModal').classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+    }
+    function switchToRegister() {
+        document.getElementById('loginForm').classList.add('hidden');
+        document.getElementById('registerForm').classList.remove('hidden');
+    }
+    function switchToLogin() {
+        document.getElementById('registerForm').classList.add('hidden');
+        document.getElementById('loginForm').classList.remove('hidden');
+    }
+
+    // === Toast Notifications ===
+    document.addEventListener('DOMContentLoaded', () => {
+        const container = document.getElementById('toastContainer');
+
+        function showToast(message, type='success'){
+            const toast = document.createElement('div');
+            toast.className = `
+                toast max-w-xs w-full px-4 py-3 rounded-lg shadow-lg flex items-center gap-3
+                text-white font-medium cursor-pointer
+                ${type==='success' ? 'bg-green-500' : 'bg-red-500'}
+                transform translate-x-20 opacity-0 transition-all duration-300
+            `;
+            toast.innerHTML = `<span>${message}</span>
+                               <button class="ml-auto font-bold">&times;</button>`;
+
+            toast.querySelector('button').addEventListener('click', ()=> toast.remove());
+
+            container.appendChild(toast);
+            requestAnimationFrame(()=> toast.classList.add('show'));
+
+            setTimeout(()=>{
+                toast.classList.remove('show');
+                toast.addEventListener('transitionend', ()=> toast.remove());
+            }, 5000);
+        }
+
+        // === Laravel Flash Messages ===
+        @if(session('success'))
+            showToast(@json(session('success')), 'success');
+        @endif
+        @if(session('error'))
+            showToast(@json(session('error')), 'error');
+        @endif
     });
-});
 </script>
+
+<style>
+.toast.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+</style>

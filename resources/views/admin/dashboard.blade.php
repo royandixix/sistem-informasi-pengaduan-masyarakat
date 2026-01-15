@@ -5,7 +5,7 @@
 @section('content')
 
 <!-- ====== HEADER DASHBOARD ====== -->
-<div class="mb-6 animate-fadeInDown">
+<div class="mb-6 animate-fadeInDown pt-16">
     <h1 class="text-3xl font-bold text-gray-800 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
         Dashboard Admin
     </h1>
@@ -24,7 +24,7 @@
             <div>
                 <p class="text-sm text-white/80 font-medium">Total Pengaduan</p>
                 <p class="text-5xl font-bold text-white mt-2">
-                    <span class="counter" data-target="120">0</span>
+                    <span class="counter" data-target="{{ $total ?? 0 }}">0</span>
                 </p>
                 <p class="text-xs text-white/70 mt-3">
                     Seluruh laporan yang masuk
@@ -49,7 +49,7 @@
             <div>
                 <p class="text-sm text-white/80 font-medium">Sedang Diproses</p>
                 <p class="text-5xl font-bold text-white mt-2">
-                    <span class="counter" data-target="40">0</span>
+                    <span class="counter" data-target="{{ $diproses ?? 0 }}">0</span>
                 </p>
                 <p class="text-xs text-white/70 mt-3">
                     Laporan dalam penanganan
@@ -72,7 +72,7 @@
             <div>
                 <p class="text-sm text-white/80 font-medium">Selesai</p>
                 <p class="text-5xl font-bold text-white mt-2">
-                    <span class="counter" data-target="80">0</span>
+                    <span class="counter" data-target="{{ $selesai ?? 0 }}">0</span>
                 </p>
                 <p class="text-xs text-white/70 mt-3">
                     Pengaduan telah dituntaskan
@@ -89,6 +89,21 @@
     </div>
 
 </div>
+
+@php
+    $totalPengaduan = $total ?? 0;
+    $diprosesCount = $diproses ?? 0;
+    $selesaiCount = $selesai ?? 0;
+    
+    // Hitung persentase
+    $persenSelesai = $totalPengaduan > 0 ? round(($selesaiCount / $totalPengaduan) * 100) : 0;
+    $persenDiproses = $totalPengaduan > 0 ? round(($diprosesCount / $totalPengaduan) * 100) : 0;
+    
+    // Untuk bar chart width
+    $widthTotal = 100;
+    $widthDiproses = $totalPengaduan > 0 ? round(($diprosesCount / $totalPengaduan) * 100) : 0;
+    $widthSelesai = $totalPengaduan > 0 ? round(($selesaiCount / $totalPengaduan) * 100) : 0;
+@endphp
 
 <!-- ====== CHART SECTION ====== -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -112,12 +127,12 @@
             <div class="bar-item group cursor-pointer">
                 <div class="flex justify-between text-sm mb-2 font-medium">
                     <span class="text-gray-700 group-hover:text-blue-600 transition-colors">Total</span>
-                    <span class="text-gray-800 font-bold counter-small" data-target="120">0</span>
+                    <span class="text-gray-800 font-bold counter-small" data-target="{{ $totalPengaduan }}">0</span>
                 </div>
                 <div class="w-full bg-gray-200 h-4 rounded-full overflow-hidden relative">
                     <div class="bar-fill absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-1000 shadow-lg" 
                          style="width: 0%"
-                         data-width="100%">
+                         data-width="{{ $widthTotal }}%">
                         <div class="absolute inset-0 bg-white/30 animate-shimmer"></div>
                     </div>
                 </div>
@@ -127,12 +142,12 @@
             <div class="bar-item group cursor-pointer">
                 <div class="flex justify-between text-sm mb-2 font-medium">
                     <span class="text-gray-700 group-hover:text-orange-600 transition-colors">Diproses</span>
-                    <span class="text-gray-800 font-bold counter-small" data-target="40">0</span>
+                    <span class="text-gray-800 font-bold counter-small" data-target="{{ $diprosesCount }}">0</span>
                 </div>
                 <div class="w-full bg-gray-200 h-4 rounded-full overflow-hidden relative">
                     <div class="bar-fill absolute top-0 left-0 h-full bg-gradient-to-r from-orange-400 to-orange-600 rounded-full transition-all duration-1000 shadow-lg" 
                          style="width: 0%"
-                         data-width="33%">
+                         data-width="{{ $widthDiproses }}%">
                         <div class="absolute inset-0 bg-white/30 animate-shimmer"></div>
                     </div>
                 </div>
@@ -142,12 +157,12 @@
             <div class="bar-item group cursor-pointer">
                 <div class="flex justify-between text-sm mb-2 font-medium">
                     <span class="text-gray-700 group-hover:text-green-600 transition-colors">Selesai</span>
-                    <span class="text-gray-800 font-bold counter-small" data-target="80">0</span>
+                    <span class="text-gray-800 font-bold counter-small" data-target="{{ $selesaiCount }}">0</span>
                 </div>
                 <div class="w-full bg-gray-200 h-4 rounded-full overflow-hidden relative">
                     <div class="bar-fill absolute top-0 left-0 h-full bg-gradient-to-r from-green-400 to-green-600 rounded-full transition-all duration-1000 shadow-lg" 
                          style="width: 0%"
-                         data-width="66%">
+                         data-width="{{ $widthSelesai }}%">
                         <div class="absolute inset-0 bg-white/30 animate-shimmer"></div>
                     </div>
                 </div>
@@ -186,7 +201,7 @@
                         stroke-width="5"
                         stroke-dasharray="0 100"
                         stroke-dashoffset="0"
-                        data-percentage="66"
+                        data-percentage="{{ $persenSelesai }}"
                         style="transition: stroke-dasharray 1.5s ease-out 0.3s;" />
                 
                 <!-- diproses (orange) -->
@@ -196,8 +211,8 @@
                         stroke="url(#orangeGradient)" 
                         stroke-width="5"
                         stroke-dasharray="0 100"
-                        stroke-dashoffset="-66"
-                        data-percentage="34"
+                        stroke-dashoffset="-{{ $persenSelesai }}"
+                        data-percentage="{{ $persenDiproses }}"
                         style="transition: stroke-dasharray 1.5s ease-out 0.6s;" />
 
                 <!-- Gradients -->
@@ -215,7 +230,7 @@
 
             <!-- Center text -->
             <div class="absolute inset-0 flex flex-col items-center justify-center">
-                <p class="text-4xl font-bold bg-gradient-to-r from-green-600 to-orange-600 bg-clip-text text-transparent counter-donut" data-target="120">0</p>
+                <p class="text-4xl font-bold bg-gradient-to-r from-green-600 to-orange-600 bg-clip-text text-transparent counter-donut" data-target="{{ $totalPengaduan }}">0</p>
                 <p class="text-sm text-gray-600 font-medium mt-1">Total</p>
             </div>
         </div>
@@ -230,10 +245,10 @@
                 </div>
                 <div class="text-right">
                     <p class="font-bold text-green-600 group-hover:text-white transition-colors duration-300">
-                        <span class="counter-legend" data-target="80">0</span>
+                        <span class="counter-legend" data-target="{{ $selesaiCount }}">0</span>
                     </p>
                     <p class="text-xs text-gray-600 group-hover:text-white/90 font-medium transition-colors duration-300">
-                        <span class="percentage-counter" data-target="66">0</span>%
+                        <span class="percentage-counter" data-target="{{ $persenSelesai }}">0</span>%
                     </p>
                 </div>
             </div>
@@ -246,10 +261,10 @@
                 </div>
                 <div class="text-right">
                     <p class="font-bold text-orange-600 group-hover:text-white transition-colors duration-300">
-                        <span class="counter-legend" data-target="40">0</span>
+                        <span class="counter-legend" data-target="{{ $diprosesCount }}">0</span>
                     </p>
                     <p class="text-xs text-gray-600 group-hover:text-white/90 font-medium transition-colors duration-300">
-                        <span class="percentage-counter" data-target="34">0</span>%
+                        <span class="percentage-counter" data-target="{{ $persenDiproses }}">0</span>%
                     </p>
                 </div>
             </div>
@@ -427,12 +442,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const prosesSegment = document.querySelector('.donut-proses');
         
         if (selesaiSegment) {
-            const percentage = selesaiSegment.getAttribute('data-percentage');
+            const percentage = parseInt(selesaiSegment.getAttribute('data-percentage'));
             selesaiSegment.setAttribute('stroke-dasharray', `${percentage} ${100 - percentage}`);
         }
         
         if (prosesSegment) {
-            const percentage = prosesSegment.getAttribute('data-percentage');
+            const percentage = parseInt(prosesSegment.getAttribute('data-percentage'));
             prosesSegment.setAttribute('stroke-dasharray', `${percentage} ${100 - percentage}`);
         }
     }, 800);
@@ -478,13 +493,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const label = this.querySelector('span').textContent;
             const value = this.querySelector('.counter-small').textContent;
             
-            // Simple alert - you can replace with modal
-            const message = `${label}: ${value} pengaduan`;
-            
             // Create temporary tooltip
             const tooltip = document.createElement('div');
             tooltip.className = 'fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-800 text-white px-6 py-3 rounded-lg shadow-2xl z-50';
-            tooltip.textContent = message;
+            tooltip.textContent = `${label}: ${value} pengaduan`;
             tooltip.style.animation = 'fadeInUp 0.3s ease-out';
             document.body.appendChild(tooltip);
             

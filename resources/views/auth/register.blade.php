@@ -54,7 +54,7 @@
         </div>
         @endif
 
-        <form action="{{ route('register') }}" method="POST" class="space-y-4">
+        <form action="{{ route('register.process') }}" method="POST" class="space-y-4">
             @csrf
             <div>
                 <label class="block text-sm font-medium text-gray-800 mb-1">Nama Lengkap</label>

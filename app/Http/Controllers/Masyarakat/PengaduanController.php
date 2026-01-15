@@ -5,36 +5,35 @@ namespace App\Http\Controllers\Masyarakat;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Pengaduan;
+use Illuminate\Support\Facades\Auth;
 
 class PengaduanController extends Controller
 {
-    /**
-     * Halaman utama masyarakat: menampilkan semua pengaduan
-     */
+    // Halaman utama masyarakat
     public function index()
-    {
-        // Tampilkan semua pengaduan, urut terbaru
-        $pengaduans = Pengaduan::latest()->get();
+{
+    // Batasi 10 pengaduan terbaru
+    $pengaduans = Pengaduan::latest()->take(10)->get();
 
-        return view('masyarakat.index', compact('pengaduans'));
-    }
+    return view('masyarakat.index', compact('pengaduans'));
+}
 
-    /**
-     * Form buat pengaduan baru
-     */
+
+    // Form pengaduan
     public function create()
     {
         return view('masyarakat.pengaduan.create');
     }
 
-    /**
-     * Simpan pengaduan baru
-     */
+    // Simpan pengaduan (wajib login)
     public function store(Request $request)
     {
+        if (!Auth::check()) {
+            return redirect()->route('masyarakat.index')
+                ->with('error', 'Silakan login untuk mengirim pengaduan.');
+        }
+
         $validated = $request->validate([
-            'nama' => 'required|string|max:255',
-            'kontak' => 'required|string|max:50',
             'judul' => 'required|string|max:255',
             'isi' => 'required|string',
             'alamat' => 'required|string|max:255',
@@ -45,38 +44,42 @@ class PengaduanController extends Controller
             'foto' => 'nullable|image|max:2048',
         ]);
 
-        // Upload foto jika ada
         if ($request->hasFile('foto')) {
             $validated['foto'] = $request->file('foto')->store('pengaduan', 'public');
         }
 
-        // Tidak pakai auth, jadi user_id nullable
-        $validated['user_id'] = null;
-        $validated['status'] = 'menunggu'; // status default
+        $user = Auth::user();
+        $validated['user_id'] = $user->id;
+        $validated['nama'] = $user->name;
+        $validated['kontak'] = $user->email;
+        $validated['status'] = 'menunggu';
 
         Pengaduan::create($validated);
 
-        return redirect()->route('masyarakat.index')
+        return redirect()->route('masyarakat.pengaduan.status')
             ->with('success', 'Pengaduan berhasil dikirim.');
     }
 
-    /**
-     * Halaman untuk cek status pengaduan
-     */
+    // Status pengaduan milik user login
     public function status()
     {
-        // Tampilkan semua pengaduan
-        $pengaduans = Pengaduan::latest()->get();
+        if (!Auth::check()) {
+            $pengaduans = collect();
+        } else {
+            $pengaduans = Pengaduan::where('user_id', Auth::id())
+                ->latest()
+                ->get();
+        }
 
         return view('masyarakat.pengaduan.status', compact('pengaduans'));
     }
 
-    /**
-     * Tampilkan detail pengaduan
-     */
+    // Detail pengaduan milik user login
     public function show($id)
     {
-        $pengaduan = Pengaduan::findOrFail($id);
+        $pengaduan = Pengaduan::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
 
         return view('masyarakat.pengaduan.show', compact('pengaduan'));
     }

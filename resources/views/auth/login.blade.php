@@ -29,6 +29,18 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+        /* Toast animation */
+        .toast {
+            transform: translateX(80px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
     </style>
 </head>
 
@@ -57,14 +69,6 @@
                 </p>
             </div>
 
-            <!-- Pesan sukses / error -->
-            @if(session('success'))
-                <div class="mb-4 text-green-700 bg-green-100 px-4 py-2 rounded">{{ session('success') }}</div>
-            @endif
-            @if(session('error'))
-                <div class="mb-4 text-red-700 bg-red-100 px-4 py-2 rounded">{{ session('error') }}</div>
-            @endif
-
             <!-- Form Login -->
             <form action="{{ route('login.process') }}" method="POST" class="space-y-6">
                 @csrf
@@ -91,7 +95,7 @@
                     @enderror
                 </div>
 
-                <!-- Ingat saya & Lupa password -->
+                {{-- <!-- Ingat saya & Lupa password -->
                 <div class="flex items-center justify-between text-sm">
                     <label class="flex items-center gap-2 text-gray-700">
                         <input type="checkbox" name="remember" class="rounded border-gray-300">
@@ -100,7 +104,7 @@
                     <a href="{{ route('password.request') }}" class="text-blue-600 hover:underline">
                         Lupa password?
                     </a>
-                </div>
+                </div> --}}
 
                 <!-- Tombol Login -->
                 <button type="submit"
@@ -160,6 +164,9 @@
         </div>
     </div>
 
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed top-4 right-4 z-50 flex flex-col gap-2"></div>
+
     <script>
         // Animasi masuk
         window.addEventListener('load', () => {
@@ -209,6 +216,40 @@
                 if (e.key === 'Escape' && !modalElements.modal.classList.contains('pointer-events-none'))
                     toggleModal(false);
             });
+        });
+
+        // Toast notifications
+        document.addEventListener('DOMContentLoaded', () => {
+            const toastContainer = document.getElementById('toastContainer');
+
+            @if(session('success'))
+                showToast("{{ session('success') }}", "success");
+            @endif
+
+            @if(session('error'))
+                showToast("{{ session('error') }}", "error");
+            @endif
+
+            function showToast(message, type="success"){
+                const toast = document.createElement('div');
+                toast.className = `
+                    toast max-w-xs w-full px-4 py-3 rounded-lg shadow-lg flex items-center gap-3
+                    text-white font-medium cursor-pointer
+                    ${type === 'success' ? 'bg-green-500' : 'bg-red-500'}
+                `;
+                toast.innerHTML = `<span>${message}</span>
+                                   <button class="ml-auto font-bold">&times;</button>`;
+
+                toast.querySelector('button').addEventListener('click', ()=> toast.remove());
+
+                toastContainer.appendChild(toast);
+                requestAnimationFrame(()=> toast.classList.add('show'));
+
+                setTimeout(()=>{
+                    toast.classList.remove('show');
+                    toast.addEventListener('transitionend', ()=> toast.remove());
+                }, 5000);
+            }
         });
     </script>
 

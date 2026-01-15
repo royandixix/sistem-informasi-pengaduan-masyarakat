@@ -1,14 +1,14 @@
 <header
-    class="fixed top-0 left-0 right-0 h-16 bg-white
+    class="fixed top-0 left-0 right-0 h-16 bg-white mb
            border-b border-gray-200
            flex items-center justify-between
            px-4 md:px-6
            z-50
            backdrop-blur supports-[backdrop-filter]:bg-white/80">
 
-    <!-- LEFT -->
+    {{-- LEFT: Toggle & Title --}}
     <div class="flex items-center gap-4">
-        <!-- Toggle Sidebar -->
+        {{-- Toggle Sidebar --}}
         <button
             id="sidebarToggle"
             class="md:hidden inline-flex items-center justify-center
@@ -23,7 +23,7 @@
             </svg>
         </button>
 
-        <!-- Title -->
+        {{-- Title --}}
         <div class="flex flex-col leading-tight">
             <span class="text-xs text-gray-400 tracking-wide">
                 Admin Panel
@@ -34,26 +34,37 @@
         </div>
     </div>
 
-    <!-- RIGHT -->
+    {{-- RIGHT: User Info & Logout --}}
     <div class="flex items-center gap-3 sm:gap-4">
 
-        <!-- Admin Name -->
-        <div class="hidden sm:flex items-center gap-2">
+        {{-- User Info --}}
+        @if(Auth::check())
+        @php
+            $user = Auth::user();
+            $initial = strtoupper(substr($user->name, 0, 1));
+        @endphp
+        <div class="flex items-center gap-2">
             <div
                 class="w-8 h-8 rounded-full bg-blue-100
                        flex items-center justify-center
                        text-blue-600 font-semibold text-sm">
-                A
+                {{ $initial }}
             </div>
-            <span class="text-sm text-gray-600 font-medium">
-                Admin
+            <span class="text-sm text-gray-600 font-medium truncate max-w-[120px] sm:max-w-[200px]">
+                {{ $user->name }}
             </span>
         </div>
+        @else
+        <a href="{{ route('login') }}" class="text-sm text-blue-600 font-medium hover:underline">
+            Login
+        </a>
+        @endif
 
-        <!-- Divider -->
+        {{-- Divider --}}
         <div class="hidden sm:block w-px h-6 bg-gray-200"></div>
 
-        <!-- Logout -->
+        {{-- Logout --}}
+        @if(Auth::check())
         <form action="{{ route('logout') }}" method="POST">
             @csrf
             <button
@@ -61,7 +72,8 @@
                        w-10 h-10 rounded-xl
                        text-gray-500 hover:text-red-600
                        hover:bg-red-50 transition
-                       focus:outline-none focus:ring-2 focus:ring-red-200">
+                       focus:outline-none focus:ring-2 focus:ring-red-200"
+                title="Logout">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8"
                      viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -71,6 +83,7 @@
                 </svg>
             </button>
         </form>
+        @endif
 
     </div>
 </header>

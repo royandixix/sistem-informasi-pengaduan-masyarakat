@@ -29,7 +29,7 @@
             ></a>
 
 
-        <a href="{{ url('/admin/pengaduan?status=diproses') }}"
+        {{-- <a href="{{ url('/admin/pengaduan?status=diproses') }}"
            class="flex items-center gap-3 px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100 transition">
             <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" stroke-width="1.8"
                 viewBox="0 0 24 24">
@@ -47,7 +47,7 @@
                     d="M9 12l2 2 4-4m7 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             Selesai
-        </a>
+        </a> --}}
 
     </nav>
 </aside>
