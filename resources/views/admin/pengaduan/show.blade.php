@@ -71,7 +71,7 @@
             <p class="text-gray-700 leading-relaxed text-sm sm:text-base">
                 {{ $pengaduan->alamat }}, {{ $pengaduan->desa }}, {{ $pengaduan->kecamatan }}, {{ $pengaduan->kabupaten }}, {{ $pengaduan->provinsi }}
             </p>
-        </div>
+        '</div>
 
         {{-- Foto Bukti --}}
         <div>

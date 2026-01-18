@@ -19,9 +19,6 @@ class AuthController extends Controller
         return view('auth.register');
     }
 
-    // =====================
-    // PROSES REGISTER ADMIN
-    // =====================
     public function register(Request $request)
     {
         $request->validate([
@@ -44,17 +41,11 @@ class AuthController extends Controller
             ->with('success','Akun admin berhasil dibuat dan langsung login.');
     }
 
-    // =====================
-    // TAMPILAN LOGIN ADMIN
-    // =====================
     public function showLogin()
     {
         return view('auth.login');
     }
 
-    // =====================
-    // PROSES LOGIN ADMIN
-    // =====================
     public function login(Request $request)
     {
         $request->validate([
@@ -75,9 +66,6 @@ class AuthController extends Controller
         return back()->with('error','Email atau password salah.');
     }
 
-    // =====================
-    // LOGOUT ADMIN
-    // =====================
     public function logout(Request $request)
     {
         Auth::logout();

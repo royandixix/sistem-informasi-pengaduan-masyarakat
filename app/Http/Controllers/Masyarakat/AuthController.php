@@ -34,6 +34,7 @@ class AuthController extends Controller
             }
 
             return back()->with('success', 'Login berhasil, selamat datang, ' . Auth::user()->name . '!');
+            
         }
 
         return back()->with('error', 'Email atau password salah.');
