@@ -4,18 +4,19 @@
 
     <nav class="px-4 py-6 space-y-1 text-sm">
 
+        {{-- Dashboard --}}
         <a href="{{ url('/admin/dashboard') }}"
-           class="flex items-center gap-3 px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100 transition">
-            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" stroke-width="1.8"
-                viewBox="0 0 24 24">
+            class="flex items-center gap-3 px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100 transition">
+            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round"
                     d="M3 12l9-9 9 9M4.5 10.5V20a1 1 0 001 1h4.5v-6h4v6H18.5a1 1 0 001-1v-9.5" />
             </svg>
             Dashboard
         </a>
 
+        {{-- Pengaduan --}}
         <a href="{{ url('/admin/pengaduan') }}"
-           class="flex items-center gap-3 px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100 transition">
+            class="flex items-center gap-3 px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100 transition">
             <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" stroke-width="1.8"
                 viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -23,31 +24,39 @@
             </svg>
             Pengaduan
         </a>
-        
-        <a href="{{ url('admin/pengaduan') }}"
-        class="flex items-center gap-3 px-4 py-2 rounded-md text-gray-50 hover:gray-100 transform-border"
-            ></a>
 
-
-        {{-- <a href="{{ url('/admin/pengaduan?status=diproses') }}"
-           class="flex items-center gap-3 px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100 transition">
+        {{-- Kategori Pengaduan --}}
+        <a href="{{ route('admin.kategori.index') }}"
+            class="flex items-center gap-3 px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100 transition">
             <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" stroke-width="1.8"
                 viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M12 6v6l4 2m6-2a10 10 0 11-20 0 10 10 0 0120 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
-            Diproses
+            Kategori
         </a>
 
-        <a href="{{ url('/admin/pengaduan?status=selesai') }}"
-           class="flex items-center gap-3 px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100 transition">
+
+        {{-- Wilayah --}}
+        <a href="{{ route('admin.instansi.index') }}"
+            class="flex items-center gap-3 px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100 transition">
             <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" stroke-width="1.8"
                 viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M9 12l2 2 4-4m7 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7L2 9h7l3-7z" />
             </svg>
-            Selesai
-        </a> --}}
+            Instansi
+        </a>
+
+        {{-- Instansi --}}
+        <a href="{{ route('admin.wilayah.index') }}"
+            class="flex items-center gap-3 px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100 transition">
+            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" stroke-width="1.8"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 14.5v-5h-2v5h2zm0-7v-2h-2v2h2z" />
+            </svg>
+            Wilayah
+        </a>
 
     </nav>
 </aside>

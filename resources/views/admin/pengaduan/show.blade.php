@@ -5,30 +5,25 @@
 @section('content')
 <div class="max-w-6xl mx-auto px-4 sm:px-6 py-24">
 
-    {{-- Background container --}}
-    <div class=" p-6 sm:p-10 space-y-10">
+    <!-- Container -->
+    <div class="p-6 sm:p-10 space-y-10 bg-white rounded-xl shadow">
 
-        {{-- Header --}}
+        <!-- Header -->
         <div>
-            <h1 class="text-3xl sm:text-4xl font-bold text-gray-800">
-                Detail Pengaduan
-            </h1>
-            <p class="text-gray-500 mt-2">
-                Informasi lengkap laporan masyarakat
-            </p>
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-800">Detail Pengaduan</h1>
+            <p class="text-gray-500 mt-2">Informasi lengkap laporan masyarakat</p>
         </div>
 
-        {{-- Informasi Grid --}}
+        <!-- Info Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-gray-800">
-
             <div>
                 <p class="text-xs text-gray-500 uppercase tracking-wide">Nama Pelapor</p>
-                <p class="font-semibold mt-1">{{ $pengaduan->nama }}</p>
+                <p class="font-semibold mt-1">{{ $pengaduan->user->name ?? '-' }}</p>
             </div>
 
             <div>
                 <p class="text-xs text-gray-500 uppercase tracking-wide">Kontak</p>
-                <p class="font-semibold mt-1">{{ $pengaduan->kontak }}</p>
+                <p class="font-semibold mt-1">{{ $pengaduan->user->kontak ?? '-' }}</p>
             </div>
 
             <div>
@@ -54,26 +49,30 @@
                 <p class="text-xs text-gray-500 uppercase tracking-wide">Tanggal</p>
                 <p class="font-semibold mt-1">{{ $pengaduan->created_at->format('d F Y') }}</p>
             </div>
-
         </div>
 
-        {{-- Isi Laporan --}}
+        <!-- Isi Laporan -->
         <div>
             <p class="text-xs text-gray-500 uppercase tracking-wide mb-2">Isi Laporan</p>
+            <p class="text-gray-700 leading-relaxed text-sm sm:text-base">{{ $pengaduan->isi }}</p>
+        </div>
+
+        <!-- Alamat Lengkap -->
+        <div>
+            <p class="text-xs text-gray-500 uppercase tracking-wide mb-2">Alamat Lengkap</p>
+            @php
+                $detail = $pengaduan->details->first();
+            @endphp
             <p class="text-gray-700 leading-relaxed text-sm sm:text-base">
-                {{ $pengaduan->isi }}
+                @if($detail)
+                    {{ $detail->alamat }}, {{ $detail->desa }}, {{ $detail->kecamatan }}, {{ $detail->kabupaten }}, {{ $detail->provinsi }}
+                @else
+                    -
+                @endif
             </p>
         </div>
 
-        {{-- Alamat --}}
-        <div>
-            <p class="text-xs text-gray-500 uppercase tracking-wide mb-2">Alamat Lengkap</p>
-            <p class="text-gray-700 leading-relaxed text-sm sm:text-base">
-                {{ $pengaduan->alamat }}, {{ $pengaduan->desa }}, {{ $pengaduan->kecamatan }}, {{ $pengaduan->kabupaten }}, {{ $pengaduan->provinsi }}
-            </p>
-        '</div>
-
-        {{-- Foto Bukti --}}
+        <!-- Foto Bukti -->
         <div>
             <p class="text-xs text-gray-500 uppercase tracking-wide mb-3">Foto Bukti</p>
             <div class="overflow-hidden rounded-2xl">
@@ -89,13 +88,14 @@
             </div>
         </div>
 
-        {{-- Update Status & Kembali --}}
+        <!-- Update Status & Kembali -->
         <div class="pt-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <form action="{{ route('admin.pengaduan.updateStatus', $pengaduan->id) }}" method="POST" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                 @csrf
                 @method('PATCH')
                 <select name="status"
                         class="px-4 py-2 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-200 focus:border-blue-500">
+                    <option value="menunggu" {{ $pengaduan->status=='menunggu' ? 'selected' : '' }}>Menunggu</option>
                     <option value="diproses" {{ $pengaduan->status=='diproses' ? 'selected' : '' }}>Diproses</option>
                     <option value="selesai" {{ $pengaduan->status=='selesai' ? 'selected' : '' }}>Selesai</option>
                 </select>
@@ -112,6 +112,6 @@
             </a>
         </div>
 
-    </div> {{-- End Background Container --}}
+    </div>
 </div>
 @endsection

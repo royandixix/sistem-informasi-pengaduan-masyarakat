@@ -6,6 +6,10 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PengaduanController as AdminPengaduan;
 use App\Http\Controllers\Masyarakat\PengaduanController as MasyarakatPengaduan;
 use App\Http\Controllers\Masyarakat\AuthController as MasyarakatAuth;
+use App\Http\Controllers\Admin\KategoriPengaduanController;
+use App\Http\Controllers\Admin\InstansiController;
+use App\Http\Controllers\Admin\WilayahController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -50,6 +54,45 @@ Route::prefix('admin')
 
         Route::patch('/pengaduan/{id}/status', [AdminPengaduan::class, 'updateStatus'])
             ->name('admin.pengaduan.updateStatus');
+
+
+        // INSTANSI CRUD
+        Route::get('/instansi', [InstansiController::class, 'index'])->name('admin.instansi.index');
+        Route::get('/instansi/create', [InstansiController::class, 'create'])->name('admin.instansi.create');
+        Route::post('/instansi', [InstansiController::class, 'store'])->name('admin.instansi.store');
+        Route::get('/instansi/{id}/edit', [InstansiController::class, 'edit'])->name('admin.instansi.edit');
+        Route::put('/instansi/{id}', [InstansiController::class, 'update'])->name('admin.instansi.update');
+        Route::delete('/instansi/{id}', [InstansiController::class, 'destroy'])->name('admin.instansi.destroy');
+
+
+        // WILAYAH CRUD
+        Route::get('/wilayah', [WilayahController::class, 'index'])->name('admin.wilayah.index');
+        Route::get('/wilayah/create', [WilayahController::class, 'create'])->name('admin.wilayah.create');
+        Route::post('/wilayah', [WilayahController::class, 'store'])->name('admin.wilayah.store');
+        Route::get('/wilayah/{id}/edit', [WilayahController::class, 'edit'])->name('admin.wilayah.edit');
+        Route::put('/wilayah/{id}', [WilayahController::class, 'update'])->name('admin.wilayah.update');
+        Route::delete('/wilayah/{id}', [WilayahController::class, 'destroy'])->name('admin.wilayah.destroy');
+
+        // =======================
+        // KATEGORI PENGADUAN CRUD
+        // =======================
+        Route::get('/kategori', [KategoriPengaduanController::class, 'index'])
+            ->name('admin.kategori.index');
+
+        Route::get('/kategori/create', [KategoriPengaduanController::class, 'create'])
+            ->name('admin.kategori.create');
+
+        Route::post('/kategori', [KategoriPengaduanController::class, 'store'])
+            ->name('admin.kategori.store');
+
+        Route::get('/kategori/{id}/edit', [KategoriPengaduanController::class, 'edit'])
+            ->name('admin.kategori.edit');
+
+        Route::put('/kategori/{id}', [KategoriPengaduanController::class, 'update'])
+            ->name('admin.kategori.update');
+
+        Route::delete('/kategori/{id}', [KategoriPengaduanController::class, 'destroy'])
+            ->name('admin.kategori.destroy');
     });
 
 /*

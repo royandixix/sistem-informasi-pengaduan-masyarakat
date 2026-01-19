@@ -8,11 +8,20 @@ use App\Models\Pengaduan;
 
 class PengaduanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $pengaduans = Pengaduan::latest()->get();
+        $query = Pengaduan::with(['user', 'details']); // eager load user & details
+
+        // filter status jika ada
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $pengaduans = $query->latest()->get();
+
         return view('admin.pengaduan.index', compact('pengaduans'));
     }
+
 
     public function show($id)
     {

@@ -4,80 +4,97 @@ namespace App\Http\Controllers\Masyarakat;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Pengaduan;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Pengaduan;
+use App\Models\PengaduanDetail;
+use App\Models\KategoriPengaduan;
+use App\Models\Wilayah;
+use App\Models\Instansi;
 
 class PengaduanController extends Controller
 {
-    // Halaman utama masyarakat
+
     public function index()
-{
-    // Batasi 10 pengaduan terbaru
-    $pengaduans = Pengaduan::latest()->take(10)->get();
-
-    return view('masyarakat.index', compact('pengaduans'));
-}
-
-
-    // Form pengaduan
-    public function create()
     {
-        return view('masyarakat.pengaduan.create');
+        $pengaduans = Pengaduan::latest()->take(10)->get();
+        return view('masyarakat.index', compact('pengaduans'));
     }
 
-    // Simpan pengaduan (wajib login)
+    public function create()
+    {
+        $kategoris = KategoriPengaduan::where('status', 'aktif')->get();
+        $wilayahs  = Wilayah::where('status', 'aktif')->get();
+        $instansis = Instansi::where('status', 'aktif')->get();
+
+        return view('masyarakat.pengaduan.create', compact('kategoris', 'wilayahs', 'instansis'));
+    }
+
     public function store(Request $request)
     {
-        if (!Auth::check()) {
-            return redirect()->route('masyarakat.index')
-                ->with('error', 'Silakan login untuk mengirim pengaduan.');
-        }
+        $request->validate([
+            'kategori_pengaduan_id' => 'required|exists:kategori_pengaduans,id',
+            'wilayah_id'            => 'required|exists:wilayahs,id',
+            'instansi_id'           => 'required|exists:instansis,id',
+            'judul'                 => 'required|string|max:255',
+            'isi'                   => 'required|string',
 
-        $validated = $request->validate([
-            'judul' => 'required|string|max:255',
-            'isi' => 'required|string',
-            'alamat' => 'required|string|max:255',
-            'desa' => 'required|string|max:100',
-            'kecamatan' => 'required|string|max:100',
-            'kabupaten' => 'required|string|max:100',
-            'provinsi' => 'required|string|max:100',
+            'alamat'     => 'required|string',
+            'desa'       => 'required|string',
+            'kecamatan'  => 'required|string',
+            'kabupaten'  => 'required|string',
+            'provinsi'   => 'required|string',
+
             'foto' => 'nullable|image|max:2048',
         ]);
 
-        if ($request->hasFile('foto')) {
-            $validated['foto'] = $request->file('foto')->store('pengaduan', 'public');
-        }
+        // Simpan master pengaduan
+        $pengaduan = Pengaduan::create([
+            'user_id'               => Auth::id(),
+            'kategori_pengaduan_id' => $request->kategori_pengaduan_id,
+            'wilayah_id'            => $request->wilayah_id,
+            'instansi_id'           => $request->instansi_id,
+            'judul'                 => $request->judul,
+            'isi'                   => $request->isi,
+            'foto'                  => $request->hasFile('foto')
+                ? $request->file('foto')->store('pengaduan', 'public')
+                : null,
+            'status' => 'menunggu',
+        ]);
 
-        $user = Auth::user();
-        $validated['user_id'] = $user->id;
-        $validated['nama'] = $user->name;
-        $validated['kontak'] = $user->email;
-        $validated['status'] = 'menunggu';
-
-        Pengaduan::create($validated);
+        // Simpan detail lokasi
+        $pengaduan->details()->create([
+            'alamat'    => $request->alamat,
+            'desa'      => $request->desa,
+            'kecamatan' => $request->kecamatan,
+            'kabupaten' => $request->kabupaten,
+            'provinsi'  => $request->provinsi,
+            'status'    => 'aktif',
+        ]);
 
         return redirect()->route('masyarakat.pengaduan.status')
             ->with('success', 'Pengaduan berhasil dikirim.');
     }
 
-    // Status pengaduan milik user login
+    /**
+     * HALAMAN STATUS PENGADUAN USER
+     */
     public function status()
     {
-        if (!Auth::check()) {
-            $pengaduans = collect();
-        } else {
-            $pengaduans = Pengaduan::where('user_id', Auth::id())
-                ->latest()
-                ->get();
-        }
+        $pengaduans = Pengaduan::with('details')
+            ->where('user_id', Auth::id())
+            ->latest()
+            ->get();
 
         return view('masyarakat.pengaduan.status', compact('pengaduans'));
     }
 
-    // Detail pengaduan milik user login
+    /**
+     * DETAIL PENGADUAN
+     */
     public function show($id)
     {
-        $pengaduan = Pengaduan::where('id', $id)
+        $pengaduan = Pengaduan::with(['kategori', 'wilayah', 'instansi', 'details'])
+            ->where('id', $id)
             ->where('user_id', Auth::id())
             ->firstOrFail();
 
